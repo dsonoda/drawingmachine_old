@@ -60,8 +60,8 @@ int bsm_steps_r = 200;
 /**
  * Motor radius (unit: mm).
  */
-double bsm_radius_l = 23.6;
-double bsm_radius_r = 23.6;
+double bsm_radius_l = 22.3;
+double bsm_radius_r = 22.3;
 
 /**
  * Right motor x coordinate (unit: mm).
@@ -147,30 +147,21 @@ void setup()
     /**
      * Motor operation instance object.
      */
-    mo = new MotorOperation(initInt, initFloat, initDouble);
-
-
-
-
-
+    mo = new MotorOperation(this, initInt, initFloat, initDouble);
 
     // Get one step movement distance of the motor (unit: mm).
     bsm_distancePer1step_l = mo.getMotorDistancePer1Step(bsm_radius_l, bsm_steps_l);
     bsm_distancePer1step_r = mo.getMotorDistancePer1Step(bsm_radius_r, bsm_steps_r);
 
-
-
-
-
-
-
+    // draw on
+    mo.drawOn();
 
     mo.moveDrawCoordinate(500.0, 400.0);
-    delay(1000);
-    mo.moveDrawCoordinate(500.0, 450.0);
 
+    mo.moveDrawCoordinate(600.0, 500.0);
 
-
+    // draw off
+    mo.drawOff();
 
 
 }

@@ -3,6 +3,8 @@
  * @author Daisuke Sonoda / @5onod4 / dksonoda@gmail.com
  * @version 0.1
  */
+import processing.core.PApplet;
+import processing.io.*;
 import java.util.*;
 
 class MotorOperation
@@ -13,6 +15,11 @@ class MotorOperation
      *  0: Normal operation.
      */
     private int debugMode = 0;
+
+    /**
+     * processing core.
+     */
+    private PApplet pa;
 
     /**
      * Stepping Motor objects.
@@ -108,10 +115,13 @@ class MotorOperation
      * @param initDouble: about double initial setting.
      */
     public MotorOperation(
+        PApplet papplet,
         Map<String,Integer> initInt,
         Map<String,Float> initFloat,
         Map<String,Double> initDouble
     ) {
+        this.pa = papplet;
+
         // validation
         if (!this.hasInit(initInt, initFloat, initDouble)) {
             throw new RuntimeException(this.getErrorMessage());
@@ -156,7 +166,7 @@ class MotorOperation
         /**
          * instance object of servo motor.
          */
-        this.servo1 = new SoftwareServo(this);
+        this.servo1 = new SoftwareServo(this.pa);
         this.servo1.attach(initInt.get("sm_gpioPin"));
         this.sm_delay = initInt.get("sm_delay");
         this.sm_offAngle = initFloat.get("sm_offAngle");
