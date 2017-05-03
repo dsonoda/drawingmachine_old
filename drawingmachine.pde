@@ -22,22 +22,25 @@ MotorOperation mo;
 /**
  * Raspberry Pi GPIO pin.
  */
-// left motor
+// left stepping motor
 int bsm_gpioPinA1_l = 12;
 int bsm_gpioPinB1_l = 20;
 int bsm_gpioPinA2_l = 16;
 int bsm_gpioPinB2_l = 21;
-// right motor
+// right stepping motor
 int bsm_gpioPinA1_r = 18;
 int bsm_gpioPinB1_r = 24;
 int bsm_gpioPinA2_r = 23;
 int bsm_gpioPinB2_r = 25;
+// center servo motor
+int sm_gpioPin = 13;
 
 /**
  * Motor delay (unit: msec).
  */
 int bsm_delay_l = 20;
 int bsm_delay_r = 20;
+int sm_delay = 2000;
 
 /**
  * Motor excitation method mode.
@@ -57,8 +60,8 @@ int bsm_steps_r = 200;
 /**
  * Motor radius (unit: mm).
  */
-double bsm_radius_l = 50.0;
-double bsm_radius_r = 50.0;
+double bsm_radius_l = 23.6;
+double bsm_radius_r = 23.6;
 
 /**
  * Right motor x coordinate (unit: mm).
@@ -66,20 +69,30 @@ double bsm_radius_r = 50.0;
  * so, the x coordinate is 0 in the left motor, and an arbitrary value in the right motor,
  * and the y coordinate equals 0 on the left and right motors.
  */
-double bsm_coordinate_x_r = 250.0;
+double bsm_coordinate_x_r = 1400.0;
 
 /**
  * Start draw coordinates (unit: mm).
  *  index 0: x
  *  index 1: y
  */
-double[] startCoordinate = {70.0, 10.0};
+double[] startCoordinate = {450.0, 350.0};
+
+/**
+ * Servo angle.
+ */
+// draw
+float sm_offAngle = 90.0;
+// not draw
+float sm_onAngle = 180.0;
 
 /**
  * Initial setting values.
  */
 // about integer
 Map<String,Integer> initInt = new HashMap<String,Integer>();
+// about float
+Map<String, Float> initFloat = new HashMap<String,Float>();
 // about double
 Map<String, Double> initDouble = new HashMap<String,Double>();
 
@@ -115,26 +128,46 @@ void setup()
     initInt.put("bsm_gpioPinB1_r", bsm_gpioPinB1_r);
     initInt.put("bsm_gpioPinA2_r", bsm_gpioPinA2_r);
     initInt.put("bsm_gpioPinB2_r", bsm_gpioPinB2_r);
+    initInt.put("sm_gpioPin", sm_gpioPin);
     initInt.put("bsm_delay_l", bsm_delay_l);
     initInt.put("bsm_delay_r", bsm_delay_r);
+    initInt.put("sm_delay", sm_delay);
     initInt.put("bsm_rotateMode_l", bsm_rotateMode_l);
     initInt.put("bsm_rotateMode_r", bsm_rotateMode_r);
     initInt.put("bsm_steps_l", bsm_steps_l);
     initInt.put("bsm_steps_r", bsm_steps_r);
+    initFloat.put("sm_offAngle", sm_offAngle);
+    initFloat.put("sm_onAngle", sm_onAngle);
     initDouble.put("bsm_radius_l", bsm_radius_l);
     initDouble.put("bsm_radius_r", bsm_radius_r);
     initDouble.put("bsm_coordinate_x_r", bsm_coordinate_x_r);
     initDouble.put("startCoordinate_x", startCoordinate[0]);
     initDouble.put("startCoordinate_y", startCoordinate[1]);
-    mo = new MotorOperation(initInt, initDouble);
 
+    /**
+     * Motor operation instance object.
+     */
+    mo = new MotorOperation(initInt, initFloat, initDouble);
+
+
+
+
+
+
+    // Get one step movement distance of the motor (unit: mm).
     bsm_distancePer1step_l = mo.getMotorDistancePer1Step(bsm_radius_l, bsm_steps_l);
     bsm_distancePer1step_r = mo.getMotorDistancePer1Step(bsm_radius_r, bsm_steps_r);
 
 
-    mo.moveDrawCoordinate(100.0, 20.0);
+
+
+
+
+
+
+    mo.moveDrawCoordinate(500.0, 400.0);
     delay(1000);
-    mo.moveDrawCoordinate(70.0, 10.0);
+    mo.moveDrawCoordinate(500.0, 450.0);
 
 
 

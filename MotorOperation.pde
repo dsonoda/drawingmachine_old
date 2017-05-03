@@ -15,10 +15,15 @@ class MotorOperation
     private int debugMode = 0;
 
     /**
-     * Motor objects.
+     * Stepping Motor objects.
      */
     private BipolarSteppingMotor motorL;
     private BipolarSteppingMotor motorR;
+
+    /**
+     * Servo Motor objects.
+     */
+    private SoftwareServo servo1;
 
     /**
      * Error message.
@@ -82,23 +87,41 @@ class MotorOperation
      */
     private double[] currentCoordinate = new double[2];
 
+    /**
+     * Servo delay.
+     */
+    private int sm_delay;
+
+    /**
+     * Servo angle.
+     */
+    // draw
+    private float sm_offAngle;
+    // not draw
+    private float sm_onAngle;
+
 
     /**
      * Constructor.
      * @param initInt: about integer initial setting.
+     * @param initFloat: about float initial setting.
      * @param initDouble: about double initial setting.
      */
     public MotorOperation(
         Map<String,Integer> initInt,
+        Map<String,Float> initFloat,
         Map<String,Double> initDouble
     ) {
         // validation
-        if (!this.hasInit(initInt, initDouble)) {
+        if (!this.hasInit(initInt, initFloat, initDouble)) {
             throw new RuntimeException(this.getErrorMessage());
         }
 
         // set debug mode
         this.debugMode = initInt.get("debugMode");
+        if (this.debugMode == 1) {
+            println("*** constructor ***");
+        }
 
         /**
          * instance object of left motor.
@@ -111,6 +134,9 @@ class MotorOperation
             initInt.get("bsm_delay_l"),
             initInt.get("bsm_rotateMode_l")
         );
+        // energize the motor and fix the pulley.
+        this.motorL.rotateRight(1);
+        this.motorL.rotateLeft(1);
 
         /**
          * instance object of right motor.
@@ -123,6 +149,21 @@ class MotorOperation
             initInt.get("bsm_delay_r"),
             initInt.get("bsm_rotateMode_r")
         );
+        // energize the motor and fix the pulley.
+        this.motorR.rotateRight(1);
+        this.motorR.rotateLeft(1);
+
+        /**
+         * instance object of servo motor.
+         */
+        this.servo1 = new SoftwareServo(this);
+        this.servo1.attach(initInt.get("sm_gpioPin"));
+        this.sm_delay = initInt.get("sm_delay");
+        this.sm_offAngle = initFloat.get("sm_offAngle");
+        this.sm_onAngle = initFloat.get("sm_onAngle");
+        // servo initial setting.
+        this.drawOff();
+
 
         this.bsm_steps_l = this.motorL.getSteps(initInt.get("bsm_steps_l"));
         this.bsm_steps_r = this.motorR.getSteps(initInt.get("bsm_steps_r"));
@@ -155,10 +196,6 @@ class MotorOperation
          */
         this.setCurrentCoordinate(initDouble.get("startCoordinate_x"), initDouble.get("startCoordinate_y"));
 
-        if (this.debugMode == 1) {
-            println("*** constructor ***");
-        }
-
         /**
          * set number of start movement steps.
          */
@@ -178,21 +215,29 @@ class MotorOperation
     /**
      * Checks whether initial setting information of integer and double type exists.
      * @param initInt
+     * @param initFloat
      * @param initDouble
      * @see When the setting value added,
      *      it is necessary to add additional information to a 'checkInitInt' or 'checkInitDouble' variable.
      * @return true: validation ok.
      */
-    private boolean hasInit(Map<String,Integer> initInt, Map<String,Double> initDouble)
+    private boolean hasInit(Map<String,Integer> initInt, Map<String,Float> initFloat, Map<String,Double> initDouble)
     {
         // initial setting value of integer
         String [] checkInitInt = {
             "debugMode",
             "bsm_gpioPinA1_l", "bsm_gpioPinB1_l", "bsm_gpioPinA2_l", "bsm_gpioPinB2_l",
             "bsm_gpioPinA1_r", "bsm_gpioPinB1_r", "bsm_gpioPinA2_r", "bsm_gpioPinB2_r",
+            "sm_gpioPin", 
             "bsm_delay_l", "bsm_delay_r",
+            "sm_delay", 
             "bsm_steps_l", "bsm_steps_r",
             "bsm_rotateMode_l", "bsm_rotateMode_r",
+        };
+
+        // initial setting value of float
+        String [] checkInitFloat = {
+            "sm_offAngle", "sm_onAngle",
         };
 
         // initial setting value of double
@@ -205,6 +250,13 @@ class MotorOperation
         for (int i = 0; i < checkInitInt.length; i++) {
             if (!initInt.containsKey(checkInitInt[i])) {
                 this.setErrorMessage("Initial setting value of integer type is insufficient.");
+                return false;
+            }
+        }
+
+        for (int i = 0; i < checkInitFloat.length; i++) {
+            if (!initFloat.containsKey(checkInitFloat[i])) {
+                this.setErrorMessage("Initial setting value of float type is insufficient.");
                 return false;
             }
         }
@@ -590,4 +642,23 @@ class MotorOperation
     {
         return (int) Math.round(distance / bsm_distancePer1Step);
     }
+
+    /**
+     * Contact pen with canvas.
+     */
+    public final void drawOn()
+    {
+        this.servo1.write(this.sm_offAngle);
+        delay(this.sm_delay);
+    }
+
+    /**
+     * Release pen from canvas.
+     */
+    public final void drawOff()
+    {
+        this.servo1.write(this.sm_onAngle);
+        delay(this.sm_delay);
+    }
+
 }
