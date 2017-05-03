@@ -28,31 +28,31 @@ class MotorOperation
     /**
      * Number of motor steps per 1 rotation.
      */
-    private int m_steps_l;
-    private int m_steps_r;
+    private int bsm_steps_l;
+    private int bsm_steps_r;
 
     /**
      * Center coordinates of the right motor (unit: mm).
      */
-    private double m_coordinate_x_r;
+    private double bsm_coordinate_x_r;
 
     /**
      * Motor radius (unit: mm).
      */
-    private double m_radius_l;
-    private double m_radius_r;
+    private double bsm_radius_l;
+    private double bsm_radius_r;
 
     /**
      * Motor circumference (unit: mm).
      */
-    private double m_cicumference_l;
-    private double m_cicumference_r;
+    private double bsm_cicumference_l;
+    private double bsm_cicumference_r;
 
     /**
      * Movement distance per 1 step of the motor (unit: mm).
      */
-    private double m_distancePer1Step_l;
-    private double m_distancePer1Step_r;
+    private double bsm_distancePer1Step_l;
+    private double bsm_distancePer1Step_r;
 
     /**
      * Calculated values to be prepared for subsequent processing.
@@ -104,42 +104,42 @@ class MotorOperation
          * instance object of left motor.
          */
         this.motorL = new BipolarSteppingMotor(
-            initInt.get("m_gpioPinA1_l"),
-            initInt.get("m_gpioPinB1_l"),
-            initInt.get("m_gpioPinA2_l"),
-            initInt.get("m_gpioPinB2_l"),
-            initInt.get("m_delay_l"),
-            initInt.get("m_rotateMode_l")
+            initInt.get("bsm_gpioPinA1_l"),
+            initInt.get("bsm_gpioPinB1_l"),
+            initInt.get("bsm_gpioPinA2_l"),
+            initInt.get("bsm_gpioPinB2_l"),
+            initInt.get("bsm_delay_l"),
+            initInt.get("bsm_rotateMode_l")
         );
 
         /**
          * instance object of right motor.
          */
         this.motorR = new BipolarSteppingMotor(
-            initInt.get("m_gpioPinA1_r"),
-            initInt.get("m_gpioPinB1_r"),
-            initInt.get("m_gpioPinA2_r"),
-            initInt.get("m_gpioPinB2_r"),
-            initInt.get("m_delay_r"),
-            initInt.get("m_rotateMode_r")
+            initInt.get("bsm_gpioPinA1_r"),
+            initInt.get("bsm_gpioPinB1_r"),
+            initInt.get("bsm_gpioPinA2_r"),
+            initInt.get("bsm_gpioPinB2_r"),
+            initInt.get("bsm_delay_r"),
+            initInt.get("bsm_rotateMode_r")
         );
 
-        this.m_steps_l = this.motorL.getSteps(initInt.get("m_steps_l"));
-        this.m_steps_r = this.motorR.getSteps(initInt.get("m_steps_r"));
+        this.bsm_steps_l = this.motorL.getSteps(initInt.get("bsm_steps_l"));
+        this.bsm_steps_r = this.motorR.getSteps(initInt.get("bsm_steps_r"));
 
-        this.m_radius_l = initDouble.get("m_radius_l");
-        this.m_radius_r = initDouble.get("m_radius_r");
+        this.bsm_radius_l = initDouble.get("bsm_radius_l");
+        this.bsm_radius_r = initDouble.get("bsm_radius_r");
 
-        this.m_cicumference_l = getMotorCircumference(this.m_radius_l);
-        this.m_cicumference_r = getMotorCircumference(this.m_radius_r);
+        this.bsm_cicumference_l = getMotorCircumference(this.bsm_radius_l);
+        this.bsm_cicumference_r = getMotorCircumference(this.bsm_radius_r);
 
-        this.m_distancePer1Step_l = getMotorDistancePer1Step(this.m_radius_l, this.m_steps_l);
-        this.m_distancePer1Step_r = getMotorDistancePer1Step(this.m_radius_r, this.m_steps_r);
+        this.bsm_distancePer1Step_l = getMotorDistancePer1Step(this.bsm_radius_l, this.bsm_steps_l);
+        this.bsm_distancePer1Step_r = getMotorDistancePer1Step(this.bsm_radius_r, this.bsm_steps_r);
 
-        this.pow2Radius_l = Math.pow(this.m_radius_l, 2);
-        this.pow2Radius_r = Math.pow(this.m_radius_r, 2);
-        this.pow4Radius_l = Math.pow(this.m_radius_l, 4);
-        this.pow4Radius_r = Math.pow(this.m_radius_r, 4);
+        this.pow2Radius_l = Math.pow(this.bsm_radius_l, 2);
+        this.pow2Radius_r = Math.pow(this.bsm_radius_r, 2);
+        this.pow4Radius_l = Math.pow(this.bsm_radius_l, 4);
+        this.pow4Radius_r = Math.pow(this.bsm_radius_r, 4);
         this.times2Pow2Radius_l = 2 * this.pow2Radius_l;
         this.times2Pow2Radius_r = 2 * this.pow2Radius_r;
         this.times4Pow4Radius_l = 4 * this.pow4Radius_l;
@@ -148,7 +148,7 @@ class MotorOperation
         /**
          * set motor center point coordinate.
          */
-        this.m_coordinate_x_r = initDouble.get("m_coordinate_x_r");
+        this.bsm_coordinate_x_r = initDouble.get("bsm_coordinate_x_r");
 
         /**
          * set current draw point coordinate.
@@ -188,17 +188,17 @@ class MotorOperation
         // initial setting value of integer
         String [] checkInitInt = {
             "debugMode",
-            "m_gpioPinA1_l", "m_gpioPinB1_l", "m_gpioPinA2_l", "m_gpioPinB2_l",
-            "m_gpioPinA1_r", "m_gpioPinB1_r", "m_gpioPinA2_r", "m_gpioPinB2_r",
-            "m_delay_l", "m_delay_r",
-            "m_steps_l", "m_steps_r",
-            "m_rotateMode_l", "m_rotateMode_r",
+            "bsm_gpioPinA1_l", "bsm_gpioPinB1_l", "bsm_gpioPinA2_l", "bsm_gpioPinB2_l",
+            "bsm_gpioPinA1_r", "bsm_gpioPinB1_r", "bsm_gpioPinA2_r", "bsm_gpioPinB2_r",
+            "bsm_delay_l", "bsm_delay_r",
+            "bsm_steps_l", "bsm_steps_r",
+            "bsm_rotateMode_l", "bsm_rotateMode_r",
         };
 
         // initial setting value of double
         String [] checkInitDouble = {
-            "m_radius_l", "m_radius_r",
-            "m_coordinate_x_r",
+            "bsm_radius_l", "bsm_radius_r",
+            "bsm_coordinate_x_r",
             "startCoordinate_x", "startCoordinate_y",
         };
 
@@ -216,8 +216,8 @@ class MotorOperation
             }
         }
 
-        if ((initDouble.get("m_radius_l") + initDouble.get("m_radius_r")) >= initDouble.get("m_coordinate_x_r")) {
-            this.setErrorMessage("'m_coordinate_x_r' value must be greater than 'm_radius_l' + 'm_radius_r'.");
+        if ((initDouble.get("bsm_radius_l") + initDouble.get("bsm_radius_r")) >= initDouble.get("bsm_coordinate_x_r")) {
+            this.setErrorMessage("'bsm_coordinate_x_r' value must be greater than 'bsm_radius_l' + 'bsm_radius_r'.");
             return false;
         }
 
@@ -356,26 +356,26 @@ class MotorOperation
      * calculate the contact coordinates of circle and line containing the draw point,
      * and the contact coordinates of circle and motor circle top point,
      * and convert distance to steps.
-     * @param m_position: motor position ('l' or 'r').
+     * @param bsm_position: motor position ('l' or 'r').
      * @param x: current draw x coordinate (unit: mm).
      * @param y: current draw y coordinate (unit: mm).
      * @return steps
      */
-    private int getDistanceSteps(char m_position, double x, double y)
+    private int getDistanceSteps(char bsm_position, double x, double y)
     {
-        double m_coordinate_x;
-        double m_cicumference;
-        double m_distancePer1Step;
+        double bsm_coordinate_x;
+        double bsm_cicumference;
+        double bsm_distancePer1Step;
         double pow2Radius;
         double pow4Radius;
         double times2Pow2Radius;
         double times4Pow4Radius;
-        switch (m_position) {
+        switch (bsm_position) {
             // left motor
             case 'l':
-                m_coordinate_x = 0.0;
-                m_cicumference = this.m_cicumference_l;
-                m_distancePer1Step = this.m_distancePer1Step_l;
+                bsm_coordinate_x = 0.0;
+                bsm_cicumference = this.bsm_cicumference_l;
+                bsm_distancePer1Step = this.bsm_distancePer1Step_l;
                 pow2Radius = this.pow2Radius_l;
                 pow4Radius = this.pow4Radius_l;
                 times2Pow2Radius = this.times2Pow2Radius_l;
@@ -383,9 +383,9 @@ class MotorOperation
                 break;
             // right motor
             case 'r':
-                m_coordinate_x = this.m_coordinate_x_r;
-                m_cicumference = this.m_cicumference_r;
-                m_distancePer1Step = this.m_distancePer1Step_r;
+                bsm_coordinate_x = this.bsm_coordinate_x_r;
+                bsm_cicumference = this.bsm_cicumference_r;
+                bsm_distancePer1Step = this.bsm_distancePer1Step_r;
                 pow2Radius = this.pow2Radius_r;
                 pow4Radius = this.pow4Radius_r;
                 times2Pow2Radius = this.times2Pow2Radius_r;
@@ -399,7 +399,7 @@ class MotorOperation
         double[] contactCoordinate = getContactCoordinate(
             x,
             y,
-            m_coordinate_x,
+            bsm_coordinate_x,
             pow2Radius,
             pow4Radius,
             times2Pow2Radius,
@@ -407,13 +407,13 @@ class MotorOperation
         );
 
         // get radian of contact coordinates of motor circle and line containing the draw point
-        double radian = getAtan2(m_coordinate_x, 0.0, contactCoordinate[0], contactCoordinate[1]);
+        double radian = getAtan2(bsm_coordinate_x, 0.0, contactCoordinate[0], contactCoordinate[1]);
 
         // get the distance from the top of the circle of motor to the draw point
-        double distance = getArcDistance(m_cicumference, ((Math.PI / 2) - radian)) + getDistance(contactCoordinate[0], contactCoordinate[1], x, y);
+        double distance = getArcDistance(bsm_cicumference, ((Math.PI / 2) - radian)) + getDistance(contactCoordinate[0], contactCoordinate[1], x, y);
 
         if (this.debugMode == 1) {
-            println("m_position="+m_position);
+            println("bsm_position="+bsm_position);
             println("contactCoordinate x="+contactCoordinate[0]);
             println("contactCoordinate y="+contactCoordinate[1]);
             println("radian="+radian);
@@ -421,14 +421,14 @@ class MotorOperation
         }
 
         // convert distance to steps and return
-        return convertDistance2Steps(distance, m_distancePer1Step);
+        return convertDistance2Steps(distance, bsm_distancePer1Step);
     }
 
     /**
      * calculate the contact coordinates of motor circle and line containing the draw point.
      * @param x: current draw x coordinate (unit: mm).
      * @param y: current draw y coordinate (unit: mm).
-     * @param m_coordinate_x: motor coordinate x (unit: mm).
+     * @param bsm_coordinate_x: motor coordinate x (unit: mm).
      * @param pow2Radius
      * @param pow4Radius
      * @param times2Pow2Radius
@@ -440,7 +440,7 @@ class MotorOperation
     private final double[] getContactCoordinate(
         double x,
         double y,
-        double m_coordinate_x,
+        double bsm_coordinate_x,
         double pow2Radius,
         double pow4Radius,
         double times2Pow2Radius,
@@ -448,7 +448,7 @@ class MotorOperation
     ) {
         double[] coordinate = new double[2];
         double[] tmpCoordinate = new double[4];
-        double currentCoordinateMinus_x = x - m_coordinate_x;
+        double currentCoordinateMinus_x = x - bsm_coordinate_x;
         double pow2_x = Math.pow(currentCoordinateMinus_x, 2);
         double pow2_y = Math.pow(y, 2);
 
@@ -457,17 +457,17 @@ class MotorOperation
         double val2 = 2 * (pow2_x + pow2_y);
 
         if (discriminant > 0) {
-            tmpCoordinate[0] = ((val1 + Math.sqrt(discriminant)) / val2) + m_coordinate_x;
-            tmpCoordinate[1] = ((val1 - Math.sqrt(discriminant)) / val2) + m_coordinate_x;
+            tmpCoordinate[0] = ((val1 + Math.sqrt(discriminant)) / val2) + bsm_coordinate_x;
+            tmpCoordinate[1] = ((val1 - Math.sqrt(discriminant)) / val2) + bsm_coordinate_x;
         } else if (discriminant == 0) {
-            tmpCoordinate[0] = (val1 / val2) + m_coordinate_x;
+            tmpCoordinate[0] = (val1 / val2) + bsm_coordinate_x;
             tmpCoordinate[1] = tmpCoordinate[0];
         } else {
-            tmpCoordinate[0] = (val1 / val2) + m_coordinate_x;
-            tmpCoordinate[1] = (Math.sqrt(discriminant) / val2) + m_coordinate_x;
+            tmpCoordinate[0] = (val1 / val2) + bsm_coordinate_x;
+            tmpCoordinate[1] = (Math.sqrt(discriminant) / val2) + bsm_coordinate_x;
         }
 
-        tmpCoordinate[2] = (pow2Radius - (currentCoordinateMinus_x * (tmpCoordinate[0] - m_coordinate_x))) / y;
+        tmpCoordinate[2] = (pow2Radius - (currentCoordinateMinus_x * (tmpCoordinate[0] - bsm_coordinate_x))) / y;
 
         // adopte the contact coordinates of which the y coordinate of the contact point is a value what less than or equal to 0
         if (tmpCoordinate[2] <= 0) {
@@ -475,7 +475,7 @@ class MotorOperation
             coordinate[1] = tmpCoordinate[2];
         } else {
             coordinate[0] = tmpCoordinate[1];
-            coordinate[1] = (pow2Radius - (currentCoordinateMinus_x * (tmpCoordinate[1] - m_coordinate_x))) / y;
+            coordinate[1] = (pow2Radius - (currentCoordinateMinus_x * (tmpCoordinate[1] - bsm_coordinate_x))) / y;
         }
 
         return coordinate;
@@ -483,16 +483,16 @@ class MotorOperation
 
     /**
      * Gget string concatenation value.
-     * @param m_position: motor position ('l' or 'r').
+     * @param bsm_position: motor position ('l' or 'r').
      * @param param_name: parameter name.
      * @return Concatenated character string.
      */
-    protected final String getConsolidatedString(char m_position, String param_name)
+    protected final String getConsolidatedString(char bsm_position, String param_name)
     {
         StringBuilder buff = new StringBuilder();
         buff.append(param_name);
         buff.append("_");
-        buff.append(m_position);
+        buff.append(bsm_position);
         return buff.toString();
     }
 
@@ -583,11 +583,11 @@ class MotorOperation
     /**
      * calculate and get the number of moving steps.
      * @param distance: moving distance (unit: mm).
-     * @param m_distancePer1Step: moving distance per motor 1 step (unit: mm).
+     * @param bsm_distancePer1Step: moving distance per motor 1 step (unit: mm).
      * @return number of moving steps.
      */
-    private final int convertDistance2Steps(double distance, double m_distancePer1Step)
+    private final int convertDistance2Steps(double distance, double bsm_distancePer1Step)
     {
-        return (int) Math.round(distance / m_distancePer1Step);
+        return (int) Math.round(distance / bsm_distancePer1Step);
     }
 }
